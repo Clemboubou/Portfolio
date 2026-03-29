@@ -1,0 +1,44 @@
+/* ============================
+   Variables & Reset global
+   ============================ */
+
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #16181c;
+  --bg-tertiary: #1d1f23;
+  --bg-hover: #181818;
+  --border: #2f3336;
+  --text-primary: #e7e9ea;
+  --text-secondary: #d5d9dd;
+  --blue: #1d9bf0;
+  --blue-hover: #1a8cd8;
+  --green: #00ba7c;
+  --pink: #f91880;
+  --blue-faded: rgba(29, 155, 240, 0.1);
+  --green-faded: rgba(0, 186, 124, 0.1);
+  --pink-faded: rgba(249, 24, 128, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.4;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
