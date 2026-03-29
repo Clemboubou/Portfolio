@@ -1,5 +1,12 @@
+<!--
+  SidebarRight.vue — Sidebar droite (style "Trending" / "Who to follow" de Twitter).
+  Affiche la stack technique et les expériences professionnelles comme raccourcis.
+  Sticky sur toute la hauteur de l'écran avec défilement interne.
+  Masquée en dessous de 1280px pour laisser plus de place au contenu.
+-->
 <template>
   <aside class="sidebar-right">
+    <!-- Barre de recherche décorative (readonly — pas fonctionnelle) -->
     <div class="search-box">
       <div class="search-wrapper">
         <svg viewBox="0 0 24 24">
@@ -9,7 +16,7 @@
       </div>
     </div>
 
-    <!-- Stack technique -->
+    <!-- Stack technique — équivalent de la section "Trending" de Twitter -->
     <div class="card">
       <h3 class="card-title">Stack Technique</h3>
       <div
@@ -22,7 +29,12 @@
       </div>
     </div>
 
-    <!-- Experiences = Who to follow -->
+    <!--
+      Expériences = équivalent "Who to follow" de Twitter.
+      Au clic sur une entreprise, émet 'go-to-post' avec le postId
+      pour que le parent puisse scroller jusqu'au post correspondant
+      dans le fil principal.
+    -->
     <div class="card">
       <h3 class="card-title">Expériences</h3>
       <div
@@ -50,10 +62,25 @@
 <script setup>
 import { trending, companies } from '../../data/portfolio.js'
 
+/**
+ * @component SidebarRight
+ * Sidebar droite avec stack technique et raccourcis vers les expériences.
+ *
+ * @emits go-to-post {string} — Émis au clic sur une expérience.
+ *   Contient le postId de l'expérience pour permettre au parent
+ *   de scroller programmatiquement vers le post correspondant
+ *   dans le fil central. Implémente la navigation croisée
+ *   sidebar → contenu principal.
+ */
 defineEmits(['go-to-post'])
 </script>
 
 <style scoped>
+/*
+  Sidebar sticky : reste en place lors du défilement du contenu central.
+  overflow-y:auto permet le défilement interne si le contenu dépasse
+  la hauteur de l'écran (cas des longues listes de technologies).
+*/
 .sidebar-right {
   width: 350px;
   padding: 0 24px;
@@ -63,10 +90,20 @@ defineEmits(['go-to-post'])
   overflow-y: auto;
 }
 
+/*
+  Masquer la scrollbar WebKit pour un rendu plus propre.
+  Le défilement reste fonctionnel (molette/tactile) mais la barre
+  visuelle est cachée pour rester fidèle à l'esthétique Twitter.
+*/
 .sidebar-right::-webkit-scrollbar {
   width: 0;
 }
 
+/*
+  La barre de recherche est sticky DANS la sidebar sticky.
+  Elle reste en haut de la sidebar même quand celle-ci défile.
+  z-index:10 pour rester au-dessus des cartes qui défilent dessous.
+*/
 .search-box {
   position: sticky;
   top: 0;
@@ -79,6 +116,7 @@ defineEmits(['go-to-post'])
   position: relative;
 }
 
+/* Icône de recherche positionnée en absolu à gauche dans l'input */
 .search-wrapper svg {
   position: absolute;
   left: 16px;
@@ -89,6 +127,7 @@ defineEmits(['go-to-post'])
   fill: var(--text-secondary);
 }
 
+/* Input avec padding-left élevé (48px) pour laisser la place à l'icône */
 .search-input {
   width: 100%;
   padding: 12px 20px 12px 48px;
@@ -102,6 +141,7 @@ defineEmits(['go-to-post'])
   transition: all 0.2s;
 }
 
+/* Au focus : fond transparent + bordure bleue (style Twitter) */
 .search-input:focus {
   background: transparent;
   border-color: var(--blue);
@@ -111,6 +151,7 @@ defineEmits(['go-to-post'])
   color: var(--text-secondary);
 }
 
+/* Cartes arrondies avec fond secondaire — style "widget" Twitter */
 .card {
   background: var(--bg-secondary);
   border-radius: 16px;
@@ -145,6 +186,7 @@ defineEmits(['go-to-post'])
   margin: 2px 0;
 }
 
+/* Items "follow" (expériences) : layout avec avatar + texte, cliquables */
 .follow-item {
   padding: 12px 16px;
   display: flex;
@@ -158,6 +200,7 @@ defineEmits(['go-to-post'])
   background: var(--bg-hover);
 }
 
+/* Avatar avec couleur dynamique via :style (pas de classe CSS prédéfinie) */
 .follow-avatar {
   width: 40px;
   height: 40px;
@@ -187,6 +230,7 @@ defineEmits(['go-to-post'])
   color: var(--text-secondary);
 }
 
+/* Masquer entièrement la sidebar droite sous 1280px (tablette et mobile) */
 @media (max-width: 1280px) {
   .sidebar-right { display: none; }
 }

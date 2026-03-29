@@ -1,13 +1,31 @@
 /**
- * Données centralisées du portfolio.
- * Toutes les informations personnelles, projets, compétences, etc.
- * sont regroupées ici pour faciliter la maintenance.
+ * DONNÉES CENTRALISÉES DU PORTFOLIO
+ *
+ * POURQUOI UN FICHIER SÉPARÉ ?
+ * On sépare les données de la logique et de l'affichage.
+ * C'est le principe de "séparation des préoccupations" (Separation of Concerns).
+ *
+ * Avantages :
+ * - Pour modifier un projet ou ajouter une compétence, on touche uniquement ce fichier
+ * - Les composants Vue restent propres : ils ne font que de l'affichage
+ * - Si demain on veut charger les données depuis une API, on change juste les imports
+ *
+ * STRUCTURE :
+ * - profile : infos personnelles (nom, contact, bio)
+ * - posts : les projets présentés comme des tweets (onglet Posts)
+ * - skillCategories : compétences groupées par catégorie (onglet Compétences)
+ * - experiences : parcours professionnel (onglet Parcours)
+ * - formations : diplômes (onglet Formation)
+ * - trending : stack technique affichée dans la sidebar droite
+ * - companies : liste des entreprises dans la sidebar droite (avec lien vers les posts)
  */
 
 export const profile = {
   name: 'Clément Bourgeois',
   handle: '@clembourgeois',
   initials: 'CB',
+  // Le chemin commence par /Portfolio/ car c'est la base URL de GitHub Pages
+  // (le nom du repo). En local avec `npm run dev`, Vite préfixe automatiquement.
   photo: '/Portfolio/photo.jpg',
   title: 'Développeur Full Stack Angular / .NET Core',
   bio: [
@@ -28,6 +46,20 @@ export const profile = {
   }
 }
 
+/**
+ * POSTS — Les projets affichés comme des tweets
+ *
+ * Chaque post a :
+ * - id : identifiant unique (utilisé pour le :key du v-for et le scroll)
+ * - text : contenu HTML du tweet (les <span class="tag"> deviennent des liens Google)
+ * - media : carte de détail du projet (label, titre, description, tags, résultat)
+ * - pinned : si true, affiche "Post épinglé" au-dessus
+ * - likes/liked : pour l'interaction du bouton cœur
+ *
+ * Le HTML dans "text" est rendu via v-html dans TweetCard.vue.
+ * Les <span class="tag"> sont transformés en liens <a> vers Google
+ * par un computed dans TweetCard (voir linkedText).
+ */
 export const posts = [
   {
     id: 0,
@@ -196,6 +228,16 @@ Premier stage en entreprise, principalement orienté documentation et compréhen
   }
 ]
 
+/**
+ * COMPÉTENCES PAR CATÉGORIE
+ *
+ * Chaque skill a un flag "pro" :
+ * - pro: true → vert (utilisé en projet professionnel)
+ * - pro: false → jaune (appris en formation, pas d'XP pro)
+ *
+ * Ça permet au recruteur de voir d'un coup d'œil quelles technos
+ * ont été utilisées en conditions réelles.
+ */
 export const skillCategories = [
   {
     name: 'Frontend',
@@ -204,12 +246,12 @@ export const skillCategories = [
     color: '',
     description: 'Technologies frontend utilisées en production et en formation.',
     skills: [
-      { name: 'Angular 18', context: 'Burden Optimisation + Tree View — Paul Wurth', pro: true },
-      { name: 'TypeScript', context: 'Burden Optimisation + Tree View — Paul Wurth', pro: true },
-      { name: 'HTML / CSS3', context: 'Tous les projets frontend — Paul Wurth + formation MNS', pro: true },
-      { name: 'JavaScript', context: 'Projets de formation MNS (QuizMaster, etc.)', pro: false },
-      { name: 'Vue.js', context: 'Portfolio personnel (ce site) + projets MNS', pro: false },
-      { name: 'React', context: 'Projets de formation MNS', pro: false }
+      { name: 'Angular 18', pro: true },
+      { name: 'TypeScript', pro: true },
+      { name: 'HTML / CSS3', pro: true },
+      { name: 'JavaScript', pro: false },
+      { name: 'Vue.js', pro: false },
+      { name: 'React', pro: false }
     ]
   },
   {
@@ -219,11 +261,11 @@ export const skillCategories = [
     color: 'green',
     description: 'Stack backend utilisée en entreprise et en formation.',
     skills: [
-      { name: '.NET Core / C#', context: 'API Burden Optimisation + Visualisation 2D — Paul Wurth', pro: true },
-      { name: 'API REST', context: 'Tous les projets Paul Wurth (endpoints Angular ↔ .NET Core)', pro: true },
-      { name: 'Java', context: 'Formation MNS + lecture de code chez efluid', pro: false },
-      { name: 'Spring Boot', context: 'Projets de formation MNS', pro: false },
-      { name: 'Node.js / Express', context: 'Projets de formation MNS (QuizMaster)', pro: false }
+      { name: '.NET Core / C#', pro: true },
+      { name: 'API REST', pro: true },
+      { name: 'Java', pro: false },
+      { name: 'Spring Boot', pro: false },
+      { name: 'Node.js / Express', pro: false }
     ]
   },
   {
@@ -233,11 +275,11 @@ export const skillCategories = [
     color: 'purple',
     description: 'Pipeline, conteneurisation et outils utilisés en contexte professionnel.',
     skills: [
-      { name: 'Azure DevOps', context: 'Pipeline CI/CD Burden Optimisation — Paul Wurth', pro: true },
-      { name: 'Docker / Linux', context: 'Environnement de test et production — Paul Wurth', pro: true },
-      { name: 'Git / GitHub', context: 'Tous les projets Paul Wurth + efluid + formation', pro: true },
-      { name: 'Grafana', context: 'Intégration visualisation 2D dans monitoring — Paul Wurth', pro: true },
-      { name: 'SkiaSharp', context: 'Rendu 2D profil de charge haut fourneau — Paul Wurth', pro: true }
+      { name: 'Azure DevOps', pro: true },
+      { name: 'Docker / Linux', pro: true },
+      { name: 'Git / GitHub', pro: true },
+      { name: 'Grafana', pro: true },
+      { name: 'SkiaSharp', pro: true }
     ]
   },
   {
@@ -247,10 +289,10 @@ export const skillCategories = [
     color: 'orange',
     description: 'Bases de données et formats de données manipulés.',
     skills: [
-      { name: 'SQL / MySQL', context: 'Tableaux de référence anonymisation — efluid SAS', pro: true },
-      { name: 'JSON', context: 'Schémas équipements industriels — Paul Wurth + efluid', pro: true },
-      { name: 'VTK', context: 'Données profil de charge haut fourneau — Paul Wurth', pro: true },
-      { name: 'SVG', context: 'Génération de schémas dynamiques — Paul Wurth', pro: true }
+      { name: 'SQL / MySQL', pro: true },
+      { name: 'JSON', pro: true },
+      { name: 'VTK', pro: true },
+      { name: 'SVG', pro: true }
     ]
   },
   {
@@ -260,12 +302,12 @@ export const skillCategories = [
     color: '',
     description: 'Approches appliquées en entreprise et en formation.',
     skills: [
-      { name: 'Agile / Scrum', context: 'Organisation du travail en équipe — Paul Wurth', pro: true },
-      { name: 'CI/CD', context: 'Pipeline Azure DevOps avec tests automatisés — Paul Wurth', pro: true },
-      { name: 'Architecture logicielle', context: 'Re-architecture VB6 vers Angular + .NET Core — Paul Wurth', pro: true },
-      { name: 'POO', context: 'C#, Java, TypeScript — tous les projets', pro: true },
-      { name: 'UX/UI', context: 'Interfaces opérateurs haut fourneau — Paul Wurth + formation MNS', pro: true },
-      { name: 'Accessibilité', context: 'Formation MNS (WCAG)', pro: false }
+      { name: 'Agile / Scrum', pro: true },
+      { name: 'CI/CD', pro: true },
+      { name: 'Architecture logicielle', pro: true },
+      { name: 'POO', pro: true },
+      { name: 'UX/UI', pro: true },
+      { name: 'Accessibilité', pro: false }
     ]
   }
 ]
@@ -347,6 +389,7 @@ export const formations = [
   }
 ]
 
+/** Stack technique affichée dans la sidebar droite (format Trending de Twitter) */
 export const trending = [
   { category: 'Frontend · Principal', name: 'Angular 18' },
   { category: 'Backend · Principal', name: '.NET Core / C#' },
@@ -355,6 +398,11 @@ export const trending = [
   { category: 'Data · Visualisation', name: 'SkiaSharp + VTK' }
 ]
 
+/**
+ * Entreprises dans la sidebar droite.
+ * postId fait le lien avec les posts : quand on clique,
+ * on scroll vers le tweet du projet correspondant.
+ */
 export const companies = [
   { name: 'Paul Wurth', role: 'Stage long · Oct 2024 - Sept 2025', icon: 'PW', color: '#1d9bf0', postId: 1 },
   { name: 'Paul Wurth', role: 'Stage Frontend · Sept 2024', icon: 'PW', color: '#1d9bf0', postId: 2 },

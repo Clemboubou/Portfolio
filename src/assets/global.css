@@ -1,6 +1,23 @@
 /* ============================
-   Variables & Reset global
-   ============================ */
+   Variables CSS globales & Reset
+   ============================
+
+   POURQUOI DES VARIABLES CSS ?
+   On définit toutes les couleurs ici dans :root pour pouvoir les
+   réutiliser dans tous les composants via var(--nom).
+   Si on veut changer une couleur, on la change à un seul endroit.
+
+   Les couleurs sont celles du thème sombre de X/Twitter :
+   - #000000 : fond principal (noir pur)
+   - #16181c : fond des cartes (gris très foncé)
+   - #2f3336 : bordures entre les sections
+   - #1d9bf0 : bleu Twitter (couleur d'accent principale)
+   - #00ba7c : vert (pour les retweets et les résultats positifs)
+   - #f91880 : rose (pour les likes)
+
+   Les variantes "faded" sont les mêmes couleurs avec 10% d'opacité,
+   utilisées comme fond des badges/tags pour un effet subtil.
+*/
 
 :root {
   --bg-primary: #000000;
@@ -19,16 +36,25 @@
   --pink-faded: rgba(249, 24, 128, 0.1);
 }
 
+/* RESET CSS
+   On supprime les marges/paddings par défaut du navigateur
+   et on passe en box-sizing: border-box pour que les paddings
+   soient inclus dans la largeur déclarée (sinon c'est le chaos). */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* scroll-behavior: smooth permet d'avoir un défilement fluide
+   quand on clique sur un lien ancre (#section) ou scrollIntoView() */
 html {
   scroll-behavior: smooth;
 }
 
+/* Font stack : on utilise les polices système pour la performance.
+   Pas de téléchargement de police = chargement instantané.
+   C'est ce que fait Twitter/X en production. */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
@@ -38,6 +64,8 @@ body {
   overflow-x: hidden;
 }
 
+/* Reset des liens : pas de couleur bleue ni de soulignement par défaut.
+   Chaque composant stylise ses propres liens. */
 a {
   color: inherit;
   text-decoration: none;

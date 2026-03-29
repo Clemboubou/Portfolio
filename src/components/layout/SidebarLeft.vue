@@ -1,9 +1,29 @@
+<!--
+  SidebarLeft.vue — Barre de navigation principale (gauche).
+  Reproduit la sidebar gauche de Twitter avec le logo X, les liens de navigation,
+  un bouton CTA "Me contacter" et une mini carte profil en bas.
+
+  Utilise le pattern v-model pour synchroniser la section active avec le parent.
+  Les items de navigation sont définis en données (tableau navItems) pour
+  faciliter l'ajout/suppression de sections sans toucher au template.
+
+  Trois layouts responsives :
+  1. Desktop (>1000px)  — sidebar complète avec icônes + labels texte
+  2. Tablette (700-1000px) — icônes seules, sidebar étroite (72px)
+  3. Mobile (<700px)    — barre de navigation fixée en bas de l'écran (bottom bar)
+-->
 <template>
   <nav class="sidebar">
+    <!-- Logo X (Twitter) en haut de la sidebar -->
     <div class="logo">
       <XLogo />
     </div>
 
+    <!--
+      Items de navigation : chaque item est un lien cliquable.
+      L'icône SVG est rendue dynamiquement via le chemin `item.icon`.
+      Le @click émet 'update:modelValue' pour le pattern v-model.
+    -->
     <a
       v-for="item in navItems"
       :key="item.id"
@@ -15,10 +35,16 @@
       <span>{{ item.label }}</span>
     </a>
 
+    <!-- Bouton CTA principal : ouvre le client email via mailto: -->
     <a :href="`mailto:${profile.email}`" class="cta-btn">
       <span class="cta-text">Me contacter</span>
     </a>
 
+    <!--
+      Mini carte profil en bas de la sidebar.
+      margin-top:auto la pousse vers le bas grâce au flex-direction:column.
+      Le nom est tronqué (prénom + initiale) pour tenir dans l'espace réduit.
+    -->
     <div class="profile-card">
       <img :src="profile.photo" :alt="profile.name" class="avatar" />
       <div class="info">
@@ -33,12 +59,29 @@
 import XLogo from '../icons/XLogo.vue'
 import { profile } from '../../data/portfolio.js'
 
+/**
+ * @component SidebarLeft
+ * Navigation principale du portfolio, style sidebar Twitter.
+ *
+ * @prop {String} modelValue — ID de la section active (v-model).
+ *   Valeurs : 'posts', 'skills', 'experience', 'formation', 'contact'.
+ *
+ * @emits update:modelValue — Émis au clic sur un item de navigation.
+ *   Permet au parent d'utiliser `<SidebarLeft v-model="activeSection" />`.
+ */
 defineProps({
   modelValue: String
 })
 
 defineEmits(['update:modelValue'])
 
+/**
+ * Liste des items de navigation.
+ * Chaque item contient un id (pour le v-model), un label affiché,
+ * et un chemin SVG (icône Twitter-style).
+ * Défini en tant que constante dans le script plutôt qu'en template
+ * pour garder le template lisible et faciliter les modifications.
+ */
 const navItems = [
   {
     id: 'posts',
@@ -69,6 +112,11 @@ const navItems = [
 </script>
 
 <style scoped>
+/*
+  Sidebar fixée sur toute la hauteur de l'écran via height:100vh + position:sticky.
+  Flex column pour empiler verticalement les éléments.
+  Bordure droite comme séparateur avec le contenu principal.
+*/
 .sidebar {
   width: 275px;
   height: 100vh;
@@ -85,6 +133,7 @@ const navItems = [
   margin-bottom: 4px;
 }
 
+/* Items de navigation : forme pilule (border-radius: 9999px) au survol */
 .nav-item {
   display: flex;
   align-items: center;
@@ -102,6 +151,7 @@ const navItems = [
   background: var(--bg-hover);
 }
 
+/* L'item actif est en gras pour le distinguer sans couleur spéciale */
 .nav-item.active {
   font-weight: 700;
 }
@@ -113,6 +163,7 @@ const navItems = [
   flex-shrink: 0;
 }
 
+/* Bouton CTA bleu proéminent — style pilule large */
 .cta-btn {
   display: block;
   width: 90%;
@@ -131,6 +182,7 @@ const navItems = [
   background: var(--blue-hover);
 }
 
+/* margin-top:auto pousse la carte profil vers le bas de la sidebar (flexbox) */
 .profile-card {
   margin-top: auto;
   padding: 12px;
@@ -170,6 +222,12 @@ const navItems = [
   font-size: 15px;
 }
 
+/*
+  BREAKPOINT TABLETTE (<=1000px) :
+  Sidebar réduite à 72px — seules les icônes sont visibles.
+  Les labels texte, le texte du CTA et les infos du profil sont masqués.
+  Le bouton CTA devient un cercle (50x50px) avec juste l'icône.
+*/
 @media (max-width: 1000px) {
   .sidebar { width: 72px; }
   .nav-item span,
@@ -185,6 +243,15 @@ const navItems = [
   }
 }
 
+/*
+  BREAKPOINT MOBILE (<=700px) :
+  La sidebar se transforme en barre de navigation fixée en bas de l'écran.
+  - position:fixed + bottom:0 pour la fixer en bas
+  - flex-direction:row + justify-content:space-around pour distribuer les icônes
+  - Le logo, le CTA, la carte profil et les labels sont masqués
+  - border-top remplace border-right comme séparateur
+  - z-index:50 pour rester au-dessus du contenu qui défile
+*/
 @media (max-width: 700px) {
   .sidebar {
     position: fixed;
