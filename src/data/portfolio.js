@@ -8,7 +8,7 @@ export const profile = {
   name: 'Clément Bourgeois',
   handle: '@clembourgeois',
   initials: 'CB',
-  photo: '/portfolio/photo.jpg',
+  photo: '/Portfolio/photo.jpg',
   title: 'Développeur Full Stack Angular / .NET Core',
   bio: [
     'Développeur Full Stack Angular / .NET Core',
